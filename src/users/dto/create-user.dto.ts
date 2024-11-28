@@ -12,10 +12,12 @@ export class CreateUserDto {
   )
   email: string;
 
+  // PASSWORD
   @IsNotEmpty({
     message: 'Chỉ có thằng viết ra app này mới có quyền để trống ô tô kê 😛',
   })
   password: string;
 
+  // NAME
   name?: string;
 }

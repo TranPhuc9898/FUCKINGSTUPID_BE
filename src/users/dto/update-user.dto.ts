@@ -1,4 +1,14 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
+import { IsNotEmpty } from 'class-validator';
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {}
+// NOTE: MAPPED TYPE
+export class UpdateUserDto extends PartialType(
+  OmitType(CreateUserDto, ['password'] as const),
+) {
+  // Thêm các field khác nếu cần
+  @IsNotEmpty({
+    message: 'Cái quần què gì dậy',
+  })
+  _id: string;
+}

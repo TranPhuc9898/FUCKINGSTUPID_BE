@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 
 //
 import { genSaltSync, hashSync } from 'bcryptjs';
@@ -41,15 +41,40 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) return 'Fucking stupid';
+    // return `This action returns a #${id} user`;
+    return this.userModel.findOne({
+      _id: id,
+    });
   }
 
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
+  async update(
+    updateUserDto: UpdateUserDto,
+  ): Promise<{ success: boolean; message: string }> {
+    const result = await this.userModel.updateOne(
+      { _id: updateUserDto._id },
+      { $set: updateUserDto },
+    );
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    if (result.modifiedCount > 0) {
+      return {
+        success: true,
+        message: 'Update thành công',
+      };
+    } else {
+      return {
+        success: false,
+        message: 'Không có gì được cập nhật hoặc tài liệu không tồn tại',
+      };
+    }
+  }
+
+  remove(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) return 'Fucking stupid';
+    // return `This action returns a #${id} user`;
+    return this.userModel.deleteOne({
+      _id: id,
+    });
   }
 }
